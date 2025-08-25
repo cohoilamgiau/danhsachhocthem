@@ -1,93 +1,127 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Đăng ký học thêm</title>
-  <style>
-    body { font-family: sans-serif; background:#f7f7f7; }
-    .container { max-width:600px; margin:40px auto; background:#fff; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
-    h1 { font-size:20px; margin-bottom:16px; }
-    label { display:block; margin:12px 0 4px; font-weight:600; }
-    input, textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; }
-    button { margin-top:16px; padding:12px 20px; border:none; border-radius:8px; background:#111827; color:#fff; cursor:pointer; }
-    .tabs { display:flex; gap:8px; margin-bottom:16px; }
-    .tab { padding:8px 12px; border-radius:999px; background:#eee; cursor:pointer; }
-    .tab.active { background:#111827; color:#fff; }
-    .toast { position:fixed; bottom:20px; right:20px; background:#111827; color:#fff; padding:12px 16px; border-radius:8px; opacity:0; transition:.3s; }
-    .toast.show { opacity:1; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Phiếu đăng ký học thêm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .radio-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .radio-group label {
+            background-color: #ddd;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .radio-group label:hover {
+            background-color: #bbb;
+        }
+        .radio-group input[type="radio"] {
+            display: none;
+        }
+        .radio-group input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #333;
+        }
+        #response {
+            margin-top: 10px;
+            text-align: center;
+            color: green;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Phiếu đăng ký học thêm</h1>
-
-    <div class="tabs" id="sheetTabs">
-      <div class="tab active" data-target="Lop10">Lớp 10</div>
-      <div class="tab" data-target="Lop11">Lớp 11</div>
-      <div class="tab" data-target="Lop12">Lớp 12</div>
-    </div>
-
-    <form id="form">
-      <label>Họ và tên</label>
-      <input id="fullName" required placeholder="Nguyễn Văn A"/>
-
-      <label>Học sinh trường</label>
-      <input id="school" placeholder="THPT X..."/>
-
-      <label>Ghi chú</label>
-      <textarea id="note" placeholder="Thông tin thêm..."></textarea>
-
-      <button type="submit" id="btnSubmit">Gửi</button>
+    <h2>Phiếu đăng ký học thêm</h2>
+    <form id="studentForm" action="https://script.google.com/macros/s/AKfycbyURogpJK7nIESK5xDTiFQXCWpSFj-r6hdcwHxVXjjLwwUYajhvg8rvgjtz7zDZV6wW7A/exec" method="post">
+        <div class="radio-group">
+            <input type="radio" id="lop10" name="lop" value="10" required>
+            <label for="lop10">Lớp 10</label>
+            <input type="radio" id="lop11" name="lop" value="11">
+            <label for="lop11">Lớp 11</label>
+            <input type="radio" id="lop12" name="lop" value="12">
+            <label for="lop12">Lớp 12</label>
+        </div>
+        <div class="form-group">
+            <label for="name">Họ và tên</label>
+            <input type="text" id="name" name="name" placeholder="Võ Thanh Phong" required>
+        </div>
+        <div class="form-group">
+            <label for="school">Học sinh trường</label>
+            <input type="text" id="school" name="school" placeholder="THPT Huỳnh Thị Hưởng" required>
+        </div>
+        <div class="form-group">
+            <label for="note">Ghi chú (Số điện thoại)</label>
+            <textarea id="note" name="note" placeholder="0981011235"></textarea>
+        </div>
+        <button type="submit">Gửi</button>
     </form>
-  </div>
+    <div id="response"></div>
 
-  <div class="toast" id="toast"></div>
-
-  <script>
-    // ⚠️ Dán URL Web App của bạn vào đây (link /exec)
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzKUPRp4mHk5MUQtaQL2RJjfFMMeZTtsxd_Z5mfedA2BaRv8i7iubiUwjn5Iwr3jQq7Xw/exec"; 
-    let target = "Lop10";
-
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab=>{
-      tab.addEventListener('click', ()=>{
-        tabs.forEach(t=>t.classList.remove('active'));
-        tab.classList.add('active');
-        target = tab.dataset.target;
-      });
-    });
-
-    const form = document.getElementById('form');
-    const toast = document.getElementById('toast');
-
-    function showToast(msg){
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(()=>toast.classList.remove('show'),2500);
-    }
-
-    form.addEventListener('submit', async e=>{
-      e.preventDefault();
-      const payload = {
-        fullName: document.getElementById('fullName').value.trim(),
-        school: document.getElementById('school').value.trim(),
-        note: document.getElementById('note').value.trim(),
-        target
-      };
-      try {
-        const res = await fetch(GAS_URL,{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(payload)
+    <script>
+        document.getElementById('studentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+              .then(text => {
+                  document.getElementById('response').textContent = text;
+                  this.reset();
+                  setTimeout(() => document.getElementById('response').textContent = '', 3000); // Xóa thông báo sau 3s
+              }).catch(error => {
+                  document.getElementById('response').textContent = 'Lỗi: ' + error;
+              });
         });
-        const data = await res.json();
-        if(data.ok){ showToast("✅ Thành công!"); form.reset(); }
-        else { showToast("❌ Lỗi: "+data.error); }
-      } catch(err){
-        showToast("❌ Kết nối lỗi");
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
