@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Đăng ký học thêm</title>
+  <style>
+    body { font-family: sans-serif; background:#f7f7f7; }
+    .container { max-width:600px; margin:40px auto; background:#fff; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+    h1 { font-size:20px; margin-bottom:16px; }
+    label { display:block; margin:12px 0 4px; font-weight:600; }
+    input, textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; }
+    button { margin-top:16px; padding:12px 20px; border:none; border-radius:8px; background:#111827; color:#fff; cursor:pointer; }
+    .tabs { display:flex; gap:8px; margin-bottom:16px; }
+    .tab { padding:8px 12px; border-radius:999px; background:#eee; cursor:pointer; }
+    .tab.active { background:#111827; color:#fff; }
+    .toast { position:fixed; bottom:20px; right:20px; background:#111827; color:#fff; padding:12px 16px; border-radius:8px; opacity:0; transition:.3s; }
+    .toast.show { opacity:1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Phiếu đăng ký học thêm</h1>
+
+    <div class="tabs" id="sheetTabs">
+      <div class="tab active" data-target="Lop10">Lớp 10</div>
+      <div class="tab" data-target="Lop11">Lớp 11</div>
+      <div class="tab" data-target="Lop12">Lớp 12</div>
+    </div>
+
+    <form id="form">
+      <label>Họ và tên</label>
+      <input id="fullName" required placeholder="Nguyễn Văn A"/>
+
+      <label>Học sinh trường</label>
+      <input id="school" placeholder="THPT X..."/>
+
+      <label>Ghi chú</label>
+      <textarea id="note" placeholder="Thông tin thêm..."></textarea>
+
+      <button type="submit" id="btnSubmit">Gửi</button>
+    </form>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzb8_UfrSurU1bJfDxTj3Bhhskz1YGxh_dvehazUcYEJbMvdOGvOXZI9808YlY1QOYcCw/exec"; 
+    let target = "Lop10";
+
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab=>{
+      tab.addEventListener('click', ()=>{
+        tabs.forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        target = tab.dataset.target;
+      });
+    });
+
+    const form = document.getElementById('form');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'),2500);
+    }
+
+    form.addEventListener('submit', async e=>{
+      e.preventDefault();
+      const payload = {
+        fullName: document.getElementById('fullName').value.trim(),
+        school: document.getElementById('school').value.trim(),
+        note: document.getElementById('note').value.trim(),
+        target
+      };
+      try {
+        const res = await fetch(GAS_URL,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if(data.ok){ showToast("✅ Thành công!"); form.reset(); }
+        else { showToast("❌ Lỗi: "+data.error); }
+      } catch(err){
+        showToast("❌ Kết nối lỗi");
+      }
+    });
+  </script>
+</body>
+</html>
