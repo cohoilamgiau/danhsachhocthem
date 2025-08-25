@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phiếu đăng ký học thêm</title>
     <style>
         body {
@@ -14,12 +15,14 @@
         h2 {
             text-align: center;
             color: #333;
+            font-size: 1.5em;
         }
         .radio-group {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         .radio-group label {
             background-color: #ddd;
@@ -27,6 +30,7 @@
             border-radius: 20px;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-size: 1em;
         }
         .radio-group label:hover {
             background-color: #bbb;
@@ -45,6 +49,7 @@
             display: block;
             margin-bottom: 5px;
             color: #555;
+            font-size: 1em;
         }
         .form-group input,
         .form-group textarea {
@@ -53,7 +58,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 1em;
         }
         .form-group textarea {
             height: 80px;
@@ -67,15 +72,47 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1.1em;
         }
         button:hover {
             background-color: #333;
+        }
+        button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
         }
         #response {
             margin-top: 10px;
             text-align: center;
             color: green;
+            font-size: 1em;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                margin: 10px auto;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+            .radio-group {
+                gap: 5px;
+                justify-content: space-around;
+            }
+            .radio-group label {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+            .form-group input,
+            .form-group textarea {
+                padding: 8px;
+                font-size: 0.9em;
+            }
+            button {
+                padding: 8px;
+                font-size: 1em;
+            }
         }
     </style>
 </head>
@@ -102,14 +139,18 @@
             <label for="note">Ghi chú (Số điện thoại)</label>
             <textarea id="note" name="note" placeholder="0981011235"></textarea>
         </div>
-        <button type="submit">Gửi</button>
+        <button type="submit" id="submitButton">Gửi</button>
     </form>
     <div id="response"></div>
 
     <script>
         document.getElementById('studentForm').addEventListener('submit', function(event) {
             event.preventDefault();
+            var submitButton = document.getElementById('submitButton');
+            if (submitButton.disabled) return; // Ngăn click thêm nếu đã disable
+
             var formData = new FormData(this);
+            submitButton.disabled = true; // Vô hiệu hóa nút sau lần click đầu
             fetch(this.action, {
                 method: 'POST',
                 body: formData
@@ -117,9 +158,13 @@
               .then(text => {
                   document.getElementById('response').textContent = text;
                   this.reset();
-                  setTimeout(() => document.getElementById('response').textContent = '', 3000); // Xóa thông báo sau 3s
+                  setTimeout(() => {
+                      document.getElementById('response').textContent = '';
+                      submitButton.disabled = false; // Kích hoạt lại nút sau 3s
+                  }, 3000);
               }).catch(error => {
                   document.getElementById('response').textContent = 'Lỗi: ' + error;
+                  submitButton.disabled = false; // Kích hoạt lại nếu lỗi
               });
         });
     </script>
